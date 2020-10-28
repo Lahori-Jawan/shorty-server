@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import PublicRoutes from './routes/auth';
+import RedirectRoute from './routes/url/redirect';
 import ProtectedRoutes from './routes';
 import {
   finalErrorHandler,
@@ -42,6 +43,7 @@ class App {
   }
 
   private setupRoutes(): void {
+    this.app.use(RedirectRoute);
     this.app.use('/auth', PublicRoutes);
     this.app.use('/api', AuthMiddleware, ProtectedRoutes);
   }

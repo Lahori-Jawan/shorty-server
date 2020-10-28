@@ -1,3 +1,4 @@
+import { NOTFOUND } from 'dns';
 import { Request, Response, NextFunction } from 'express';
 import URL from '../../models/Url';
 import User from '../../models/User';
@@ -58,5 +59,14 @@ export default class UrlController {
     res.status(200).json({
       urls,
     });
+  }
+
+  async getURL(req: Request, res: Response, next: NextFunction) {
+    const WEB_APP_URL = process.env.WEB_APP_URL;
+    const url = `${req.protocol}//:${req.hostname}/${req.path}`;
+    const found = await URL.findOne({ short: url });
+
+    if (!found) res.status(301).redirect(`${WEB_APP_URL}/404`);
+    else res.status(301).redirect(found.url);
   }
 }
