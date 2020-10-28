@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es6",
+    "sourceMap": false,
+    "experimentalDecorators": true,
+    "noImplicitUseStrict": true,
+    "removeComments": true,
+    "moduleResolution": "node",
+    "lib": ["ESNext"],
+    "typeRoots": ["node_modules/@types", "src/@types"]
+  },
+  "globals": {
+    "ts-jest": {
+      "babelConfig": "babel.config.js"
+    }
+  },
+  "exclude": ["node_modules", "out", ".next"]
+}
