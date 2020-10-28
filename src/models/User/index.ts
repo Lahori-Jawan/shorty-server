@@ -60,7 +60,10 @@ UserSchema.pre('save', async function save(next) {
 
   if (err) next(err);
 
-  const { token } = createToken({ userId: user._id });
+  const { token } = createToken({
+    userId: user._id,
+    activeDomain: user.activeDomain,
+  });
 
   user.accessToken = token;
   user.password = hashedData;
@@ -185,7 +188,7 @@ UserSchema.methods.purchase = async function (domains: string[]) {
 };
 
 UserSchema.methods.setActiveDomain = async function (domainId: string) {
-  let domain = { active: false };
+  let domain = { active: false, name: this.default };
   let response: IResponse = {
     message: ``,
     created: true,
@@ -208,6 +211,12 @@ UserSchema.methods.setActiveDomain = async function (domainId: string) {
     response.created = false;
     return response;
   }
+  const { token } = createToken({
+    userId: this._id,
+    activeDomain: domain.name, //
+  });
+
+  this.accessToken = token;
 
   const [error, doc] = await tryy(this.save());
 

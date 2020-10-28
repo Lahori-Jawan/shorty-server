@@ -18,16 +18,16 @@ export default class UrlController {
     if (!hasValidFields(req.body, ['url']))
       return next(new ErrorHandler('Required fields are missing', 400));
 
-    // if (!isValidId(req.params.user)) return next(new ErrorHandler('id is not valid'));
-    //* normally user Id would be extracted from token
-    // req.user._id = req.body.user
-    let [err, user] = await User.getUser(req.body.userId);
+    req.body.url = req.body.url.startsWith('http')
+      ? req.body.url
+      : `https://${req.body.url}`;
 
-    if (err) return next(err);
+    // let [err, user] = await User.getUser(req.body.userId);
 
-    req.body['user'] = user._id;
-    req.body['domain'] = user.activeDomain;
+    // if (err) return next(err);
 
+    // req.body['domain'] = user.activeDomain;
+    console.log('req.body', req.body);
     const { record, message, status } = await URL.findOrCreate(req.body);
 
     if (status >= 400) return next(new ErrorHandler(message, status));
@@ -71,7 +71,7 @@ export default class UrlController {
   async getURL(req: Request, res: Response, next: NextFunction) {
     const url = `${req.protocol}://${req.headers.host}/${req.params.url}`;
     const found = await URL.findOne({ short: url }).lean();
-    console.log({ found, url });
+
     if (!found) res.status(302).redirect(`${process.env.WEB_APP_URL}/404`);
     else res.status(302).redirect(found.url);
   }

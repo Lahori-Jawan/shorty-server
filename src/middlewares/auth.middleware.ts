@@ -12,5 +12,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
   if (verifyError) return next(verifyError);
 
   req.body.userId = user.userId;
+  req.body.domain = user.activeDomain;
+
   next();
 };
