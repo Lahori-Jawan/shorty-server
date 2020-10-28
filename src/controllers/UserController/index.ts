@@ -53,7 +53,9 @@ export default class UserController {
       return next(new ErrorHandler('id is not valid', 400));
     }
 
-    const user = await User.findById(req.body.userId);
+    let [err, user] = await User.getUser(req.body.userId);
+
+    if (err) return next(err);
 
     const { record, message, status } = await user.setActiveDomain(
       req.body.domainId

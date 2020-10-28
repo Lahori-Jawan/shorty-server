@@ -1,4 +1,3 @@
-import { NOTFOUND } from 'dns';
 import { Request, Response, NextFunction } from 'express';
 import URL from '../../models/Url';
 import User from '../../models/User';
@@ -15,18 +14,13 @@ export default class UrlController {
   async shortenUrl(req: Request, res: Response, next: NextFunction) {
     const data = Object.assign({}, req.body, req.params);
 
-    if (!hasValidFields(req.body, ['url']))
+    if (!hasValidFields(req.body, ['userId', 'url']))
       return next(new ErrorHandler('Required fields are missing', 400));
 
     req.body.url = req.body.url.startsWith('http')
       ? req.body.url
       : `https://${req.body.url}`;
 
-    // let [err, user] = await User.getUser(req.body.userId);
-
-    // if (err) return next(err);
-
-    // req.body['domain'] = user.activeDomain;
     console.log('req.body', req.body);
     const { record, message, status } = await URL.findOrCreate(req.body);
 

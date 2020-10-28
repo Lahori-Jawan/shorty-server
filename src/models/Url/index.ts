@@ -20,6 +20,7 @@ const URLSchema = new Schema(
     user: {
       type: Schema.Types.ObjectId,
       ref: 'User',
+      required: [true, 'User id is required'],
     },
   },
   { timestamps: true }
@@ -43,7 +44,8 @@ URLSchema.statics.findOrCreate = async function (urlObj: IURL) {
 
   return new Promise(async (resolve) => {
     urlObj.short = `${urlObj.domain}/${shortId.generate()}`;
-
+    urlObj.user = urlObj.userId;
+    console.log({ urlObj });
     const doc = this(urlObj);
 
     doc.$short = urlObj.short; // to access in hook i.e. .pre('save')
