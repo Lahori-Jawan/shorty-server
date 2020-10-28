@@ -20,6 +20,8 @@ export default class AuthController {
       return next(new ErrorHandler('Required fields are missing', 400));
     }
 
+    req.body.default = process.env.DEFAULT_DOMAIN;
+
     const { record, message, status } = await User.findOrCreate2(req.body);
 
     if (status >= 400) return next(new ErrorHandler(message, status)); // for any error i.e. server or client

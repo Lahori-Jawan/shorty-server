@@ -31,7 +31,7 @@ const UserSchema = new Schema(
     },
     default: {
       type: String,
-      default: 'pbid.io',
+      required: true,
     },
     purchased: [
       {

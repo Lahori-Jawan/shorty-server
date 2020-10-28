@@ -61,10 +61,17 @@ export default class UrlController {
     });
   }
 
+  /**
+   * @function getURL
+   * @description Redirect to url or not found page
+   * @param     {Object} req - required
+   * @param     {string} req.params.url - required
+   */
+
   async getURL(req: Request, res: Response, next: NextFunction) {
     const url = `${req.protocol}://${req.headers.host}/${req.params.url}`;
     const found = await URL.findOne({ short: url }).lean();
-
+    console.log({ found, url });
     if (!found) res.status(302).redirect(`${process.env.WEB_APP_URL}/404`);
     else res.status(302).redirect(found.url);
   }

@@ -42,7 +42,7 @@ URLSchema.statics.findOrCreate = async function (urlObj: IURL) {
     };
 
   return new Promise(async (resolve) => {
-    urlObj.short = `https://${urlObj.domain}/${shortId.generate()}`;
+    urlObj.short = `${urlObj.domain}/${shortId.generate()}`;
 
     const doc = this(urlObj);
 
