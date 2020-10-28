@@ -63,7 +63,10 @@ export default class AuthController {
         return next(new Error('Password or email is not correct'));
       }
 
-      const { token } = createToken({ userId: user._id });
+      const { token } = createToken({
+        userId: user._id,
+        activeDomain: user.activeDomain,
+      });
 
       user.accessToken = token;
 
