@@ -43,9 +43,14 @@ class App {
   }
 
   private setupRoutes(): void {
-    this.app.use(RedirectRoute);
+    this.app.get('/', (req, res) =>
+      res.json({
+        message: 'Its Working',
+      })
+    );
     this.app.use('/auth', PublicRoutes);
     this.app.use('/api', AuthMiddleware, ProtectedRoutes);
+    this.app.use(RedirectRoute);
   }
 
   private setupProcessEventHandlers(): void {
