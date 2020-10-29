@@ -11,6 +11,7 @@ import {
   unhandledPromiseRejectionHandler,
   uncaughtExceptionHandler,
   authMiddleware as AuthMiddleware,
+  ignoreFavicon as IgnoreFavicon,
 } from './middlewares';
 
 class App {
@@ -43,14 +44,15 @@ class App {
   }
 
   private setupRoutes(): void {
+    this.app.use(IgnoreFavicon);
     this.app.get('/', (req, res) =>
       res.json({
         message: 'Its Working',
       })
     );
+    this.app.use(RedirectRoute);
     this.app.use('/auth', PublicRoutes);
     this.app.use('/api', AuthMiddleware, ProtectedRoutes);
-    this.app.use(RedirectRoute);
   }
 
   private setupProcessEventHandlers(): void {
