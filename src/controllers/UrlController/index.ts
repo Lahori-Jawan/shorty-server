@@ -1,8 +1,9 @@
-import { NOTFOUND } from 'dns';
 import { Request, Response, NextFunction } from 'express';
 import URL from '../../models/Url';
 import User from '../../models/User';
 import { ErrorHandler, hasValidFields, isValidId } from '../../utils';
+
+const WEB_APP_URL = process.env.WEB_APP_URL;
 
 export default class UrlController {
   /**
@@ -68,12 +69,12 @@ export default class UrlController {
    * @param     {string} req.params.url - required
    */
 
-  async getURL(req: Request, res: Response, next: NextFunction) {
+  async getURL(req: Request, res: Response) {
     const NODE_ENV = process.env.NODE_ENV === 'production' ? 'https' : 'http';
     const url = `${NODE_ENV}://${req.headers.host}/${req.params.url}`;
     const found = await URL.findOne({ short: url }).lean();
     console.log({ found, url, NODE_ENV });
-    if (!found) res.status(302).redirect(`${process.env.WEB_APP_URL}/404`);
+    if (!found) res.status(302).redirect(`${WEB_APP_URL}/404`);
     else res.status(302).redirect(found.url);
   }
 }
