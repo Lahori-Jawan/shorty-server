@@ -3,8 +3,6 @@ import URL from '../../models/Url';
 import User from '../../models/User';
 import { ErrorHandler, hasValidFields, isValidId } from '../../utils';
 
-const WEB_APP_URL = process.env.WEB_APP_URL;
-
 export default class UrlController {
   /**
    * @function findOrCreate
@@ -14,14 +12,15 @@ export default class UrlController {
    */
 
   async shortenUrl(req: Request, res: Response, next: NextFunction) {
-    const data = Object.assign({}, req.body, req.params);
+    // const data = Object.assign({}, req.body, req.params);
 
     if (!hasValidFields(req.body, ['url']))
       return next(new ErrorHandler('Required fields are missing', 400));
 
-    // if (!isValidId(req.params.user)) return next(new ErrorHandler('id is not valid'));
-    //* normally user Id would be extracted from token
-    // req.user._id = req.body.user
+    req.body.url = req.body.url.startsWith('http')
+      ? req.body.url
+      : `https://${req.body.url}`;
+
     let [err, user] = await User.getUser(req.body.userId);
 
     if (err) return next(err);
@@ -70,10 +69,15 @@ export default class UrlController {
    */
 
   async getURL(req: Request, res: Response) {
-    const NODE_ENV = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-    const url = `${NODE_ENV}://${req.headers.host}/${req.params.url}`;
-    const found = await URL.findOne({ short: url }).lean();
-    console.log({ found, url, NODE_ENV });
+    const WEB_APP_URL = process.env.WEB_APP_URL;
+    const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+    const url = `${protocol}://${req.headers.host}/${req.params.url}`;
+    const found = await URL.findOneAndUpdate(
+      { short: url },
+      { $inc: { clicks: 1 } },
+      { new: true } // returns updated doc
+    ).lean();
+    console.log('heders', found);
     if (!found) res.status(302).redirect(`${WEB_APP_URL}/404`);
     else res.status(302).redirect(found.url);
   }
