@@ -69,9 +69,10 @@ export default class UrlController {
    */
 
   async getURL(req: Request, res: Response, next: NextFunction) {
-    const url = `${req.protocol}://${req.headers.host}/${req.params.url}`;
+    const NODE_ENV = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+    const url = `${NODE_ENV}://${req.headers.host}/${req.params.url}`;
     const found = await URL.findOne({ short: url }).lean();
-    console.log({ found, url });
+    console.log({ found, url, NODE_ENV });
     if (!found) res.status(302).redirect(`${process.env.WEB_APP_URL}/404`);
     else res.status(302).redirect(found.url);
   }
